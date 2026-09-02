@@ -57,10 +57,9 @@ class Job1ExecutionListenerTest {
                 "mongoToOracleJob", 1L, 100L);
         execution.setStatus(status);
 
-        StepExecution step = MetaDataInstanceFactory.createStepExecution(execution, "job1Step", 200L);
-        for (long i = 0; i < writeCount; i++) {
-            step.incrementCommitCount();
-        }
+        StepExecution step = MetaDataInstanceFactory.createStepExecution("job1Step", 200L);
+        step.setWriteCount(writeCount);
+        execution.addStepExecutions(java.util.List.of(step));
         return execution;
     }
 }

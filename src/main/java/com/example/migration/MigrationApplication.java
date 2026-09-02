@@ -7,7 +7,8 @@ import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -29,15 +30,15 @@ public class MigrationApplication {
 
     private static final Logger log = LoggerFactory.getLogger(MigrationApplication.class);
 
-    private final JobLauncher jobLauncher;
+    private final JobOperator jobOperator;
     private final ApplicationContext ctx;
     private final String jobName;
 
     public MigrationApplication(
-            JobLauncher jobLauncher,
+            JobOperator jobOperator,
             ApplicationContext ctx,
-            @org.springframework.beans.factory.annotation.Value("${migration.schedule.job-name:mongoToOracleJob}") String jobName) {
-        this.jobLauncher = jobLauncher;
+            @Value("${migration.schedule.job-name:mongoToOracleJob}") String jobName) {
+        this.jobOperator = jobOperator;
         this.ctx = ctx;
         this.jobName = jobName;
     }
@@ -56,7 +57,7 @@ public class MigrationApplication {
                 .addLong("run.id", System.currentTimeMillis())
                 .toJobParameters();
 
-        JobExecution execution = jobLauncher.run(job, params);
+        JobExecution execution = jobOperator.start(job, params);
         log.info("Job '{}' finished with status: {}", jobName, execution.getStatus());
     }
 }

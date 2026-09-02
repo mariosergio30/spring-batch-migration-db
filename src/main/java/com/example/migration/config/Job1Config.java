@@ -15,8 +15,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.core.task.AsyncTaskExecutor;
 
 /**
  * Defines Job 1: mongoToOracleJob
@@ -37,14 +36,13 @@ public class Job1Config {
     @Bean
     public Step job1Step(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
             MongoOrderReader reader,
             OrderProcessor processor,
             OracleOrderWriter writer,
-            TaskExecutor migrationTaskExecutor) {
+            AsyncTaskExecutor migrationTaskExecutor) {
 
         return new StepBuilder("job1Step", jobRepository)
-                .<OrderDocument, OrderEntity>chunk(chunkSize, transactionManager)
+                .<OrderDocument, OrderEntity>chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

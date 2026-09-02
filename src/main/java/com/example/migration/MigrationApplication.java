@@ -8,44 +8,47 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * Application entry point.
  *
- * Usage:
- *   java -jar migration-app.jar                   → runs "mongoToOracleJob" (default)
- *   java -jar migration-app.jar mongoToOracleJob   → same, explicit
- *   java -jar migration-app.jar anotherMigrationJob → runs a different registered job
+ * The job runs on the cron expression defined by migration.schedule.cron
+ * (default: every day at 02:00).
  *
- * Any Spring-managed Job bean is selectable by its bean name via the first CLI argument.
+ * To run a different job, override migration.schedule.job-name.
+ *
+ * Spring Batch auto-run on startup is disabled via:
+ *   spring.batch.job.enabled=false
  */
 @SpringBootApplication
-public class MigrationApplication implements CommandLineRunner {
+public class MigrationApplication {
 
     private static final Logger log = LoggerFactory.getLogger(MigrationApplication.class);
 
-    private static final String DEFAULT_JOB = "mongoToOracleJob";
-
     private final JobLauncher jobLauncher;
     private final ApplicationContext ctx;
+    private final String jobName;
 
-    public MigrationApplication(JobLauncher jobLauncher, ApplicationContext ctx) {
+    public MigrationApplication(
+            JobLauncher jobLauncher,
+            ApplicationContext ctx,
+            @org.springframework.beans.factory.annotation.Value("${migration.schedule.job-name:mongoToOracleJob}") String jobName) {
         this.jobLauncher = jobLauncher;
         this.ctx = ctx;
+        this.jobName = jobName;
     }
 
     public static void main(String[] args) {
-        System.exit(SpringApplication.exit(SpringApplication.run(MigrationApplication.class, args)));
+        SpringApplication.run(MigrationApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        String jobName = (args.length > 0 && !args[0].isBlank()) ? args[0] : DEFAULT_JOB;
-        log.info("Launching job: {}", jobName);
+    @Scheduled(cron = "${migration.schedule.cron:0 0 2 * * *}")
+    public void runScheduled() throws Exception {
+        log.info("Scheduled trigger — launching job: {}", jobName);
 
         Job job = ctx.getBean(jobName, Job.class);
 
@@ -54,6 +57,6 @@ public class MigrationApplication implements CommandLineRunner {
                 .toJobParameters();
 
         JobExecution execution = jobLauncher.run(job, params);
-        log.info("Job '{}' completed with status: {}", jobName, execution.getStatus());
+        log.info("Job '{}' finished with status: {}", jobName, execution.getStatus());
     }
 }

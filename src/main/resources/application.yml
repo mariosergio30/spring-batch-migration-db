@@ -31,6 +31,9 @@ migration:
     chunk-size: 100               # items committed per DB transaction
     page-size: 500                # documents read per Mongo page (N)
     thread-count: 4               # parallel worker threads (must be ≤ hikari max-pool-size)
+  schedule:
+    cron: "0 0 2 * * *"          # every day at 02:00
+    job-name: mongoToOracleJob
 
 logging:
   level:

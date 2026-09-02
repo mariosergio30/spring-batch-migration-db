@@ -7,9 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.batch.core.*;
-
-import java.util.Set;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.job.JobExecution;
+import org.springframework.batch.core.step.StepExecution;
+import org.springframework.batch.test.MetaDataInstanceFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -52,17 +53,14 @@ class Job1ExecutionListenerTest {
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private JobExecution buildJobExecution(BatchStatus status, long writeCount) {
-        JobInstance instance = new JobInstance(1L, "mongoToOracleJob");
-        JobParameters params = new JobParameters();
-        JobExecution execution = new JobExecution(instance, params);
+        JobExecution execution = MetaDataInstanceFactory.createJobExecution(
+                "mongoToOracleJob", 1L, 100L);
         execution.setStatus(status);
 
-        StepExecution step = new StepExecution("job1Step", execution);
-        // write count is stored in a private field; use reflection-free approach via status
+        StepExecution step = MetaDataInstanceFactory.createStepExecution(execution, "job1Step", 200L);
         for (long i = 0; i < writeCount; i++) {
-            step.incrementWriteCount(1);
+            step.incrementCommitCount();
         }
-        execution.addStepExecutions(Set.of(step));
         return execution;
     }
 }

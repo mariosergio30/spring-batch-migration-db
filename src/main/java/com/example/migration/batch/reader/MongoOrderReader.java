@@ -24,9 +24,10 @@ public class MongoOrderReader extends MongoPagingItemReader<OrderDocument> {
     public MongoOrderReader(
             MongoTemplate mongoTemplate,
             @Value("${migration.job1.page-size:500}") int pageSize) {
+        super(mongoTemplate, OrderDocument.class);
 
         setName("mongoOrderReader");
-        setMongoTemplate(mongoTemplate);
+        //setMongoTemplate(mongoTemplate);
         setTargetType(OrderDocument.class);
         setQuery(new Query());                          // reads all documents; add Criteria to filter
         setPageSize(pageSize);

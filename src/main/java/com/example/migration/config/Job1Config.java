@@ -6,7 +6,9 @@ import com.example.migration.batch.writer.OracleOrderWriter;
 import com.example.migration.domain.mongo.OrderDocument;
 import com.example.migration.domain.oracle.OrderEntity;
 import com.example.migration.listener.Job1ExecutionListener;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.parameters.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -39,8 +41,7 @@ public class Job1Config {
             MongoOrderReader reader,
             OrderProcessor processor,
             OracleOrderWriter writer,
-            TaskExecutor migrationTaskExecutor,
-            @Value("${migration.job1.thread-count:4}") int threadCount) {
+            TaskExecutor migrationTaskExecutor) {
 
         return new StepBuilder("job1Step", jobRepository)
                 .<OrderDocument, OrderEntity>chunk(chunkSize, transactionManager)
@@ -48,7 +49,6 @@ public class Job1Config {
                 .processor(processor)
                 .writer(writer)
                 .taskExecutor(migrationTaskExecutor)
-                .throttleLimit(threadCount)
                 .build();
     }
 

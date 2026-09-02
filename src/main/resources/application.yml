@@ -1,0 +1,38 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/legacy_db
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: migration_user
+    password: secret
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database-platform: org.hibernate.dialect.OracleDialect
+    open-in-view: false
+
+  batch:
+    jdbc:
+      initialize-schema: always   # auto-creates Spring Batch meta-tables
+    job:
+      enabled: false              # jobs are launched programmatically, not on startup
+
+# ── Application tunables ────────────────────────────────────────────────────
+migration:
+  job1:
+    chunk-size: 100               # items committed per DB transaction
+    page-size: 500                # documents read per Mongo page (N)
+    thread-count: 4               # parallel worker threads (must be ≤ hikari max-pool-size)
+
+logging:
+  level:
+    org.springframework.batch: INFO
+    com.example.migration: DEBUG

@@ -1,0 +1,29 @@
+spring:
+  data:
+    mongodb:
+      # Use an embedded/test Mongo or Flapdoodle in tests
+      uri: mongodb://localhost:27017/test_db
+
+  datasource:
+    # H2 in-memory for Spring Batch meta-tables; Oracle JPA entities are not tested here
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=Oracle
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+migration:
+  job1:
+    chunk-size: 10
+    page-size: 50
+    thread-count: 2

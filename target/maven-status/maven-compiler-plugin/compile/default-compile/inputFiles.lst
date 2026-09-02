@@ -1,0 +1,13 @@
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\batch\processor\OrderProcessor.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\batch\reader\MongoOrderReader.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\batch\writer\OracleOrderWriter.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\config\BatchConfig.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\config\Job1Config.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\domain\mongo\OrderDocument.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\domain\oracle\MigrationReportEntity.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\domain\oracle\OrderEntity.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\listener\Job1ExecutionListener.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\MigrationApplication.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\repository\MigrationReportRepository.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\repository\OrderMongoRepository.java
+C:\dev\source\spring-batch\migration-app\src\main\java\com\example\migration\repository\OrderOracleRepository.java
